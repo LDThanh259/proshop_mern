@@ -1,0 +1,21 @@
+server:
+  # Port HTTP nội bộ của Promtail
+  http_listen_port: 9080
+
+positions:
+  # Lưu vị trí đã đọc log để tránh đọc lại từ đầu sau restart
+  filename: /tmp/positions.yaml
+
+clients:
+  # Gửi log sang Loki
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: system
+    # Đọc toàn bộ file log trong /var/log
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: varlogs
+          __path__: /var/log/*log

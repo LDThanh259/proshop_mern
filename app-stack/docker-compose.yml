@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  nginx:
+    # Nginx là lớp reverse proxy nhận toàn bộ traffic từ bên ngoài
+    image: nginx:1.27
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - observability
+
+  frontend:
+    # Build frontend trực tiếp từ source ProShop thật trong repo con
+    build:
+      context: ../proshop_mern/frontend
+    container_name: frontend
+    networks:
+      - observability
+
+  backend:
+    # Backend dùng Dockerfile đặt trong repo ProShop gốc
+    build:
+      context: ../proshop_mern
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    environment:
+      # MongoDB được gọi qua DNS nội bộ trong Docker network
+      - MONGO_URI=mongodb://mongodb:27017/proshop
+      # Chạy đúng chế độ production để backend serve frontend build khi cần
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    networks:
+      - observability
+
+  mongodb:
+    # Database lưu dữ liệu đơn hàng, người dùng và sản phẩm
+    image: mongo:7
+    container_name: mongodb
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - observability
+
+volumes:
+  # Named volume để dữ liệu MongoDB không mất khi container bị xóa
+  mongo-data:
+
+networks:
+  # Network dùng chung giữa app stack và monitoring stack
+  observability:
+    external: true

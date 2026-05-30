@@ -1,0 +1,35 @@
+auth_enabled: false
+
+server:
+  # Cổng API của Loki
+  http_listen_port: 3100
+
+common:
+  # Đường dẫn lưu dữ liệu cục bộ trong container
+  path_prefix: /loki
+  storage:
+    filesystem:
+      # Nơi lưu chunk dữ liệu log
+      chunks_directory: /loki/chunks
+      # Nơi lưu rule index
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      # Dùng bộ nhớ nội bộ cho cluster 1 node
+      store: inmemory
+
+schema_config:
+  configs:
+    # Schema TSDB cho log storage
+    - from: 2024-01-01
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+limits_config:
+  # Bật structured metadata để linh hoạt hơn khi truy vấn log
+  allow_structured_metadata: true

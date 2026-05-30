@@ -1,0 +1,82 @@
+version: "3.9"
+
+services:
+  prometheus:
+    # Thu thập metrics từ node-exporter và cadvisor
+    image: prom/prometheus:v2.55.1
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - observability
+
+  grafana:
+    # Dashboard trực quan hóa metrics và logs
+    image: grafana/grafana:11.3.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - observability
+
+  node-exporter:
+    # Lấy metric ở mức hệ điều hành của EC2 host
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - observability
+
+  cadvisor:
+    # Theo dõi mức sử dụng tài nguyên của Docker containers
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    ports:
+      - "8080:8080"
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - observability
+
+  loki:
+    # Lưu trữ logs tập trung từ Promtail
+    image: grafana/loki:3.2.1
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki/local-config.yaml:/etc/loki/local-config.yaml:ro
+    networks:
+      - observability
+
+  promtail:
+    # Đọc log file và đẩy vào Loki
+    image: grafana/promtail:3.2.1
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - ./promtail/config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - observability
+
+volumes:
+  # Volume lưu dữ liệu Grafana, giữ dashboard và datasource khi restart
+  grafana-data:
+
+networks:
+  # Dùng chung network với app stack để Grafana/Prometheus/Loki gọi nhau bằng tên service
+  observability:
+    external: true
