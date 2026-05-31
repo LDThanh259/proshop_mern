@@ -58,9 +58,16 @@ project/
 `app-stack/docker-compose.yml` chỉ giữ các phần triển khai:
 
 - `nginx`
-- `frontend` build từ `../proshop_mern/frontend`
-- `backend` build từ `../proshop_mern`
+- `frontend` pull từ `ghcr.io/ldthanh259/proshop_mern-frontend:latest`
+- `backend` pull từ `ghcr.io/ldthanh259/proshop_mern-backend:latest`
 - `mongodb`
+
+### Luồng build image
+
+- Source code nằm trong `proshop_mern/`
+- GitHub Actions build image từ source đó
+- Image được đẩy lên GitHub Container Registry
+- EC2 chỉ cần `docker compose up -d` để pull và chạy
 
 ## Monitoring stack
 
@@ -135,3 +142,4 @@ docker compose up -d
 
 Các file placeholder trong `app-stack/` đã được loại bỏ để tránh trùng lặp với source thật trong `proshop_mern/`.
 
+Xem hướng dẫn thực hành chi tiết tại [`HUONG_DAN_THUC_HANH.md`](F:\Cloud Computing\Capstone Project\HUONG_DAN_THUC_HANH.md).
