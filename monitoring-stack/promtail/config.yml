@@ -12,10 +12,47 @@ clients:
 
 scrape_configs:
   - job_name: docker
-    # Đọc Docker JSON logs của toàn bộ container
-    static_configs:
-      - targets:
-          - localhost
-        labels:
-          job: docker
-          __path__: /var/lib/docker/containers/*/*-json.log
+    # Lấy metadata container trực tiếp từ Docker để tách label theo nhóm dịch vụ
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+
+    relabel_configs:
+      # Đọc log JSON của container theo đường dẫn Docker chuẩn
+      - source_labels: [__meta_docker_container_id]
+        target_label: __path__
+        replacement: /var/lib/docker/containers/$1/$1-json.log
+
+      # Giữ lại các metadata hữu ích cho query
+      - source_labels: [__meta_docker_container_name]
+        target_label: container
+        regex: /(.+)
+        replacement: $1
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        target_label: service
+      - source_labels: [__meta_docker_container_label_com_docker_compose_project]
+        target_label: project
+      - source_labels: [__meta_docker_container_image]
+        target_label: image
+
+      # Mặc định là infra để container lạ vẫn có label group
+      - target_label: group
+        replacement: infra
+
+      # app: frontend, backend, nginx
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        regex: (frontend|backend|nginx)
+        target_label: group
+        replacement: app
+
+      # db: mongodb
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        regex: mongodb
+        target_label: group
+        replacement: db
+
+      # monitoring: prometheus, grafana, loki, promtail, alertmanager
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        regex: (prometheus|grafana|loki|promtail|alertmanager)
+        target_label: group
+        replacement: monitoring

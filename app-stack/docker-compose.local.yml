@@ -81,4 +81,3 @@ networks:
   # Network dung chung giua Nginx, frontend, backend va MongoDB.
   observability:
     external: true
-
