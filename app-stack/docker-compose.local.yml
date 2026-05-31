@@ -17,10 +17,8 @@ services:
     # Build frontend tu source code local.
     build:
       context: ../proshop_mern
-      dockerfile: frontend/Dockerfile
+      dockerfile: frontend/Dockerfile.serve
     container_name: frontend-local
-    ports:
-      - "3001:80"
     networks:
       - observability
 

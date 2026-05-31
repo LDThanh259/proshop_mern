@@ -1,0 +1,7 @@
+services:
+  frontend:
+    # Frontend duoc pull tu GitHub Container Registry voi Node server runtime.
+    image: ghcr.io/ldthanh259/proshop_mern-frontend-node:latest
+    container_name: frontend
+    networks:
+      - observability

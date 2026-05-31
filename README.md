@@ -69,6 +69,17 @@ project/
 - Image được đẩy lên GitHub Container Registry
 - EC2 chỉ cần `docker compose up -d` để pull và chạy
 
+### Frontend runtime modes
+
+- `serve` là mode mặc định, gọn và dễ dùng cho static React build.
+- `node` là mode thay thế khi bạn muốn một runtime Node tự phục vụ file tĩnh.
+- Local mode:
+  - `app-stack/docker-compose.local.yml` dùng `serve`
+  - `app-stack/docker-compose.local.node.yml` ghép cùng file local cơ sở để dùng `node`
+- GHCR mode:
+  - `app-stack/docker-compose.yml` dùng `serve`
+  - `app-stack/docker-compose.node.yml` ghép cùng file GHCR cơ sở để dùng `node`
+
 ## Monitoring stack
 
 `monitoring-stack/` gồm:

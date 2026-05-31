@@ -15,8 +15,7 @@ RUN npm run build
 
 FROM nginx:1.27-alpine
 
-# Serve React build bằng Nginx để chạy ổn định hơn dev server
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+# Frontend now serves only static React files.
 COPY --from=build /app/frontend/build /usr/share/nginx/html
 
 EXPOSE 80

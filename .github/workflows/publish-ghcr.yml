@@ -21,7 +21,7 @@ jobs:
         include:
           - name: frontend
             context: ./proshop_mern
-            file: ./proshop_mern/frontend/Dockerfile
+            file: ./proshop_mern/frontend/Dockerfile.serve
             image: ghcr.io/ldthanh259/proshop_mern-frontend
           - name: backend
             context: ./proshop_mern
