@@ -30,6 +30,9 @@ scrape_configs:
         replacement: $1
       - source_labels: [__meta_docker_container_label_com_docker_compose_service]
         target_label: service
+      # Grafana "Logs / App" dashboard expects label "app"
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        target_label: app
       - source_labels: [__meta_docker_container_label_com_docker_compose_project]
         target_label: project
       - source_labels: [__meta_docker_container_image]

@@ -24,10 +24,6 @@ services:
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager"
-      - "--config.expand-env=true"
-    environment:
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-replace_me}
-      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-replace_me}
     networks:
       - observability
 
@@ -52,8 +48,8 @@ services:
       - observability
 
   cadvisor:
-    # Theo dõi mức sử dụng tài nguyên của Docker containers
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    # v0.55+ required for Docker storage driver "overlayfs" on Ubuntu 24.04 / Docker CE 27+
+    image: gcr.io/cadvisor/cadvisor:v0.55.1
     container_name: cadvisor
     ports:
       - "8080:8080"

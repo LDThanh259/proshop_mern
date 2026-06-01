@@ -21,10 +21,6 @@ services:
     command:
       - --config.file=/etc/alertmanager/alertmanager.yml
       - --storage.path=/alertmanager
-      - --config.expand-env=true
-    environment:
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:9093/-/healthy"]
@@ -55,21 +51,6 @@ services:
     restart: unless-stopped
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.52.0
-    command:
-      - --docker_only=true
-      - --housekeeping_interval=10s
-      - --disable_metrics=advtcp,cpu_topology,cpuset,hugetlb,memory_numa,process,referenced_memory,resctrl,sched,tcp,udp
-      - --store_container_labels=false
-    devices:
-      - /dev/kmsg
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker:/var/lib/docker:ro
-      - /dev/disk:/dev/disk:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
   loki:

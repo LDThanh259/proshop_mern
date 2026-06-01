@@ -42,6 +42,15 @@ if [[ "${RUN_SEED:-false}" == "true" ]]; then
   docker compose --profile seed up seed
 fi
 
+echo "==> Render alertmanager config"
+if [[ -f "$MON_DIR/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$MON_DIR/.env"
+  set +a
+fi
+bash "$ROOT/scripts/render-alertmanager.sh" "$MON_DIR"
+
 echo "==> Start monitoring stack (prod overrides)"
 cd "$MON_DIR"
 MON_ENV="${MON_DIR}/.env"
@@ -50,6 +59,9 @@ if [[ -f "$MON_ENV" ]]; then
   COMPOSE_ENV=(--env-file "$MON_ENV")
 fi
 docker compose -f docker-compose.yml -f docker-compose.prod.yml "${COMPOSE_ENV[@]}" up -d
+
+echo "==> Recreate cadvisor + promtail (metric/log label fixes)"
+docker compose -f docker-compose.yml -f docker-compose.prod.yml "${COMPOSE_ENV[@]}" up -d --force-recreate cadvisor promtail alertmanager
 
 echo "==> Container status"
 docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
