@@ -153,4 +153,6 @@ docker compose up -d
 
 Các file placeholder trong `app-stack/` đã được loại bỏ để tránh trùng lặp với source thật trong `proshop_mern/`.
 
-Xem hướng dẫn thực hành chi tiết tại [`HUONG_DAN_THUC_HANH.md`](F:\Cloud Computing\Capstone Project\HUONG_DAN_THUC_HANH.md).
+Xem hướng dẫn thực hành chi tiết tại [`HUONG_DAN_THUC_HANH.md`](HUONG_DAN_THUC_HANH.md).
+
+Deploy EC2 / đồng bộ cấu hình (phương án C): [`docs/DEPLOY.md`](docs/DEPLOY.md).

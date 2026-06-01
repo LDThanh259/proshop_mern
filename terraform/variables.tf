@@ -20,7 +20,7 @@ variable "ami_id" {
 variable "instance_type" {
   # Cỡ máy EC2
   type    = string
-  default = "t3.micro"
+  default = "c7i-flex.large"
 }
 
 variable "key_name" {
@@ -32,5 +32,5 @@ variable "key_name" {
 variable "root_volume_size" {
   # Dung lượng ổ đĩa gốc tính theo GB
   type    = number
-  default = 8
+  default = 40
 }

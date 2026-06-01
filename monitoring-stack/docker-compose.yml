@@ -24,9 +24,10 @@ services:
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager"
+      - "--config.expand-env=true"
     environment:
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-replace_me}
-      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-replace_me}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-replace_me}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-replace_me}
     networks:
       - observability
 
@@ -57,11 +58,15 @@ services:
     ports:
       - "8080:8080"
     privileged: true
+    command:
+      - --docker_only=true
+      - --housekeeping_interval=10s
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - observability
 

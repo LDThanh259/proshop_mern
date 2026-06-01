@@ -11,8 +11,10 @@ yarn-error.log*
 # Env files
 .env
 .env.*
+!.env.example
 **/.env
 **/.env.*
+!**/.env.example
 
 # Terraform
 *.tfstate
