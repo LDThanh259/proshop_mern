@@ -1,0 +1,12 @@
+groups:
+  - name: ram-alerts
+    rules:
+      - alert: HighMemoryUsage
+        # Công thức: (Tổng RAM - RAM còn trống) / Tổng RAM * 100 > 85%
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Memory usage is above 85%"
+          description: "Memory usage on {{ $labels.instance }} is above 85% for more than 1 minute. Current usage is {{ $value | printf \"%.2f\" }}%."
